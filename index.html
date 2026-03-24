@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware Platforms for CUDA Learning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-card: #0d1117;
+            --bg-code: #161b22;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent: #76B900;
+            --accent-dim: #76B90044;
+            --accent-glow: #76B90033;
+            --border: #21262d;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --font-body: 'Inter', sans-serif;
+            --max-width: 900px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 17px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── Header ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .series-label {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 .accent {
+            color: var(--accent);
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* ── Tag Pills ── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+            white-space: nowrap;
+        }
+
+        /* ── Pipeline Flow Bar ── */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            max-width: var(--max-width);
+        }
+
+        .pipeline-step {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 0.3rem 0.7rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        /* ── Slides ── */
+        .slide {
+            min-height: 100vh;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-number {
+            font-family: var(--font-display);
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--accent-dim);
+            position: absolute;
+            top: 2rem;
+            right: 1.5rem;
+            line-height: 1;
+            user-select: none;
+        }
+
+        .slide h2 {
+            font-family: var(--font-display);
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            line-height: 1.25;
+        }
+
+        .slide h3 {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .slide p strong {
+            color: var(--text-primary);
+        }
+
+        .slide ul, .slide ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .slide li {
+            margin-bottom: 0.4rem;
+        }
+
+        .slide li strong {
+            color: var(--text-primary);
+        }
+
+        /* ── Code Blocks ── */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1.25rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: rgba(118, 185, 0, 0.08);
+            padding: 0.4rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-block pre {
+            margin: 0;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #c9d1d9;
+        }
+
+        /* Syntax highlighting (manual) */
+        .kw { color: #ff7b72; }
+        .fn { color: #d2a8ff; }
+        .str { color: #a5d6ff; }
+        .cm { color: #8b949e; font-style: italic; }
+        .num { color: #79c0ff; }
+        .type { color: #ffa657; }
+        .dir { color: #ff7b72; }
+        .mac { color: #ffa657; }
+
+        /* ── Tables ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--bg-code);
+            color: var(--accent);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-display);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) td {
+            background: rgba(13, 17, 23, 0.5);
+        }
+
+        /* ── Diagrams ── */
+        .diagram-flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-box {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .diagram-box.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(118, 185, 0, 0.08);
+        }
+
+        .diagram-box.dim {
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .diagram-arrow {
+            color: var(--accent);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Vertical flow diagrams */
+        .diagram-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-vertical .diagram-arrow {
+            font-size: 1.1rem;
+        }
+
+        /* Nested hierarchy diagram */
+        .hierarchy {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .hierarchy-level {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hierarchy-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .hierarchy-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .hierarchy-item {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .hierarchy-item.accent {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(118, 185, 0, 0.08);
+        }
+
+        /* Grid diagram */
+        .diagram-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .diagram-grid.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .diagram-grid.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .diagram-panel {
+            padding: 1rem;
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .diagram-panel.accent-border {
+            border-left: 3px solid var(--accent);
+        }
+
+        .diagram-panel h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .diagram-panel p, .diagram-panel ul {
+            font-size: 0.85rem;
+        }
+
+        /* ── Callout Boxes ── */
+        .callout {
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .callout p {
+            margin-bottom: 0;
+        }
+
+        .callout .callout-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+
+        /* ── Tier Visual ── */
+        .tier-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .tier-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tier-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 90px;
+            text-align: right;
+        }
+
+        .tier-fill {
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            transition: width 0.6s ease;
+        }
+
+        .tier-cost {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 70px;
+        }
+
+        /* ── Contents list ── */
+        .contents-list {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: contents;
+        }
+
+        .contents-list li {
+            counter-increment: contents;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contents-list li:last-child {
+            border-bottom: none;
+        }
+
+        .contents-list li::before {
+            content: counter(contents, decimal-leading-zero);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 2rem;
+        }
+
+        .contents-list a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contents-list a:hover {
+            color: var(--accent);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .slide {
+                padding: 3rem 1rem;
+                min-height: auto;
+            }
+
+            .slide-number {
+                font-size: 3rem;
+                top: 1.5rem;
+                right: 1rem;
+            }
+
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+
+            .diagram-grid.cols-2,
+            .diagram-grid.cols-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                gap: 0.15rem;
+            }
+
+            .pipeline-step {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            table {
+                font-size: 0.78rem;
+            }
+
+            .tier-label {
+                min-width: 60px;
+                font-size: 0.65rem;
+            }
+
+            .tier-fill {
+                font-size: 0.6rem;
+                height: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════ HERO ════════════════════════════════════════════ -->
+<header class="hero">
+    <div class="series-label">CUDA Programming Series — Tutorial 10</div>
+    <h1>Hardware Platforms for <span class="accent">CUDA Learning</span></h1>
+    <p class="subtitle">Practical buying guide — DGX Spark, consumer GPUs, cloud instances, Google Colab — cost, capability, and honest recommendations.</p>
+
+    <div class="tags">
+        <span class="tag">CUDA</span>
+        <span class="tag">Hardware</span>
+        <span class="tag">DGX Spark</span>
+        <span class="tag">Consumer GPUs</span>
+        <span class="tag">Cloud</span>
+        <span class="tag">Google Colab</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">Requirements</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Colab</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Budget GPU</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Mid-Range</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">DGX Spark</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Cluster</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Cloud</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Recommendations</span>
+    </div>
+</header>
+
+<!-- ═══════════════════════════════ SLIDE 00 — Contents ═══════════════════════════════ -->
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <p>This is a hardware buying guide, not a coding tutorial. We'll walk through every tier of CUDA-capable hardware — from free cloud notebooks to workstation-class machines — with honest assessments of cost, capability, and who each option is actually for.</p>
+    <ul class="contents-list">
+        <li><a href="#slide-01">What You Actually Need to Learn CUDA</a></li>
+        <li><a href="#slide-02">Free Tier — Google Colab</a></li>
+        <li><a href="#slide-03">Budget Desktop — Used / Entry Consumer GPU</a></li>
+        <li><a href="#slide-04">Mid-Range — RTX 4070 / 4090</a></li>
+        <li><a href="#slide-05">The NVIDIA DGX Spark</a></li>
+        <li><a href="#slide-06">Two-Spark Cluster</a></li>
+        <li><a href="#slide-07">Cloud GPU Instances</a></li>
+        <li><a href="#slide-08">Recommendation Matrix</a></li>
+        <li><a href="#slide-09">Summary</a></li>
+    </ul>
+    <div class="callout">
+        <div class="callout-label">Note</div>
+        <p>Prices are approximate as of early 2026 and will vary by region and market conditions. GPU prices on the used market fluctuate significantly.</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 01 — Requirements ═══════════════════════════════ -->
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>What You Actually Need to Learn CUDA</h2>
+
+    <p>The barrier to entry for CUDA programming is lower than most people think. You need exactly three things:</p>
+
+    <div class="diagram-grid cols-3">
+        <div class="diagram-panel accent-border">
+            <h4>NVIDIA GPU</h4>
+            <p>Any NVIDIA GPU with CUDA support — compute capability 5.0 or higher. This includes every GeForce card from the GTX 900 series onward.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>CUDA Toolkit</h4>
+            <p>Free download from NVIDIA. Includes <strong>nvcc</strong> compiler, runtime libraries, and profiling tools like Nsight.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Terminal + Editor</h4>
+            <p>A text editor and a terminal. VS Code with the CUDA extension works well. No IDE required.</p>
+        </div>
+    </div>
+
+    <h3>Minimum Compute Capability</h3>
+    <p>CUDA compute capability determines which features your GPU supports. For this tutorial series, <strong>5.0+</strong> covers everything through Tutorial 09. Unified memory (<code>cudaMallocManaged</code>) works best on 6.0+.</p>
+
+    <div class="diagram-flow">
+        <div class="diagram-box dim">CC 3.x (Kepler)</div>
+        <div class="diagram-arrow">&rarr;</div>
+        <div class="diagram-box dim">CC 5.x (Maxwell)</div>
+        <div class="diagram-arrow">&rarr;</div>
+        <div class="diagram-box accent">CC 6.x (Pascal)</div>
+        <div class="diagram-arrow">&rarr;</div>
+        <div class="diagram-box accent">CC 7.x (Volta/Turing)</div>
+        <div class="diagram-arrow">&rarr;</div>
+        <div class="diagram-box accent">CC 8.x (Ampere)</div>
+        <div class="diagram-arrow">&rarr;</div>
+        <div class="diagram-box accent">CC 9.x+ (Ada/Blackwell)</div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Key Point</div>
+        <p>You do <strong>not</strong> need an expensive GPU to learn CUDA. A five-year-old GTX 1650 can run every kernel in Tutorials 01&ndash;06. The hardware only starts to matter when you're doing real workloads — large matrix multiplications, ML training, or multi-GPU programming.</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 02 — Google Colab ═══════════════════════════════ -->
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>Free Tier — Google Colab</h2>
+
+    <p>The fastest way to start writing CUDA code without installing anything or spending any money.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>What You Get (Free)</h4>
+            <ul>
+                <li><strong>Tesla T4 GPU</strong> — 16 GB VRAM</li>
+                <li>Compute capability 7.5 (Turing)</li>
+                <li>2,560 CUDA cores</li>
+                <li>Pre-installed CUDA toolkit</li>
+                <li>Jupyter notebook interface</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>How to Use It</h4>
+            <ul>
+                <li>Runtime &rarr; Change runtime type &rarr; T4 GPU</li>
+                <li>Use <code>%%cuda</code> magic cell (with nvcc4jupyter)</li>
+                <li>Or compile manually: <code>!nvcc -o out kernel.cu</code></li>
+                <li>Write .cu files with <code>%%writefile</code></li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Colab CUDA Workflow</h3>
+    <div class="code-block">
+        <div class="code-header">Google Colab — cell 1: install plugin</div>
+        <pre><code><span class="cm"># Install the CUDA plugin for Jupyter</span>
+!pip install nvcc4jupyter
+%load_ext nvcc4jupyter</code></pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header">Google Colab — cell 2: write and run CUDA</div>
+        <pre><code><span class="dir">%%cuda</span>
+<span class="dir">#include</span> &lt;cstdio&gt;
+
+<span class="kw">__global__</span> <span class="kw">void</span> <span class="fn">hello</span>() {
+    <span class="fn">printf</span>(<span class="str">"Hello from thread %d\n"</span>, threadIdx.x);
+}
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    hello<span class="mac">&lt;&lt;&lt;</span><span class="num">1</span>, <span class="num">32</span><span class="mac">&gt;&gt;&gt;</span>();
+    <span class="fn">cudaDeviceSynchronize</span>();
+}</code></pre>
+    </div>
+
+    <h3>Limitations</h3>
+    <ul>
+        <li><strong>Session timeouts</strong> — free tier disconnects after ~90 minutes of inactivity, or ~12 hours total</li>
+        <li><strong>No Nsight profiling</strong> — <code>nsys</code> and <code>ncu</code> are not available; limited to basic timing with CUDA events</li>
+        <li><strong>No persistent storage</strong> — files disappear when the session ends (save to Google Drive)</li>
+        <li><strong>GPU not guaranteed</strong> — during peak times, you may get a CPU-only runtime</li>
+        <li><strong>Colab Pro</strong> (£9/month) gives priority access, longer sessions, and sometimes A100 GPUs</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">Verdict</div>
+        <p><strong>Best for:</strong> Getting started immediately, working through Tutorials 01&ndash;08, learning from any machine with a browser. <strong>Not ideal for:</strong> Profiling-heavy tutorials, persistent projects, or anything requiring long uninterrupted sessions.</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 03 — Budget Desktop ═══════════════════════════════ -->
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>Budget Desktop — Used / Entry Consumer GPU</h2>
+
+    <p>A local GPU is the most practical option for serious CUDA learning. Full control over your environment, real profiling tools, and no session limits.</p>
+
+    <h3>The Sweet Spot: RTX 3060 12 GB</h3>
+    <p>The <strong>RTX 3060 12 GB</strong> is the best bang-for-buck CUDA learning card. It has more VRAM than the RTX 3070 (which only has 8 GB), enough CUDA cores for meaningful parallel workloads, Ampere architecture with compute capability 8.6, and can be found used for around £250.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Why 12 GB Matters</h4>
+            <ul>
+                <li>Large array operations without running out of memory</li>
+                <li>Comfortable for small ML model training</li>
+                <li>Can handle every exercise in this tutorial series</li>
+                <li>8 GB cards hit limits on later exercises</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Other Budget Options</h4>
+            <ul>
+                <li><strong>RTX 3050 (8 GB)</strong> — cheaper (~£150), adequate for basics</li>
+                <li><strong>RTX 4060 (8 GB)</strong> — newer arch, same VRAM limit</li>
+                <li><strong>GTX 1650 (4 GB)</strong> — works for Tutorials 01&ndash;06</li>
+                <li><strong>GTX 1080 Ti (11 GB)</strong> — old but capable, ~£150 used</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Budget GPU Comparison</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>GPU</th>
+                    <th>VRAM</th>
+                    <th>CUDA Cores</th>
+                    <th>CC</th>
+                    <th>Approx Price</th>
+                    <th>Suitability</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>GTX 1650</strong></td>
+                    <td>4 GB</td>
+                    <td>896</td>
+                    <td>7.5</td>
+                    <td>~£80</td>
+                    <td>Tutorials 01&ndash;06 only</td>
+                </tr>
+                <tr>
+                    <td><strong>GTX 1080 Ti</strong></td>
+                    <td>11 GB</td>
+                    <td>3,584</td>
+                    <td>6.1</td>
+                    <td>~£150</td>
+                    <td>Full series, no Tensor Cores</td>
+                </tr>
+                <tr>
+                    <td><strong>RTX 3050</strong></td>
+                    <td>8 GB</td>
+                    <td>2,560</td>
+                    <td>8.6</td>
+                    <td>~£150</td>
+                    <td>Most tutorials, VRAM limited</td>
+                </tr>
+                <tr>
+                    <td><strong>RTX 3060 12 GB</strong></td>
+                    <td>12 GB</td>
+                    <td>3,584</td>
+                    <td>8.6</td>
+                    <td>~£250</td>
+                    <td style="color: var(--accent);"><strong>Best value — full series</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>RTX 4060</strong></td>
+                    <td>8 GB</td>
+                    <td>3,072</td>
+                    <td>8.9</td>
+                    <td>~£280</td>
+                    <td>Newer arch, less VRAM</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Recommendation</div>
+        <p>If you're buying one GPU specifically for CUDA learning, the <strong>used RTX 3060 12 GB</strong> at ~£250 is the clear winner. It covers every tutorial in this series with room to spare, and gives you access to full profiling with Nsight Systems and Nsight Compute.</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 04 — Mid-Range ═══════════════════════════════ -->
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>Mid-Range — RTX 4070 / 4090</h2>
+
+    <p>If you want to go beyond tutorials and do real ML training, inference, or large-scale CUDA projects, the Ada Lovelace generation offers a significant step up.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>RTX 4070 Ti Super</h4>
+            <ul>
+                <li>16 GB GDDR6X VRAM</li>
+                <li>8,448 CUDA cores</li>
+                <li>Compute capability 8.9</li>
+                <li>4th-gen Tensor Cores</li>
+                <li>~£600&ndash;£750</li>
+                <li>Good balance of price and capability</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>RTX 4090</h4>
+            <ul>
+                <li>24 GB GDDR6X VRAM</li>
+                <li>16,384 CUDA cores</li>
+                <li>Compute capability 8.9</li>
+                <li>4th-gen Tensor Cores</li>
+                <li>~£1,400&ndash;£1,600</li>
+                <li>The consumer ceiling</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>When Mid-Range Makes Sense</h3>
+    <ul>
+        <li><strong>Real ML training</strong> — fine-tuning models like Llama 7B/13B, training custom architectures</li>
+        <li><strong>Large CUDA projects</strong> — image processing pipelines, physics simulations, financial modelling</li>
+        <li><strong>Tensor Core programming</strong> — WMMA intrinsics, FP16/BF16 matrix operations</li>
+        <li><strong>Daily driver</strong> — also works as a gaming and general compute GPU</li>
+    </ul>
+
+    <h3>VRAM Is the Bottleneck</h3>
+    <p>For ML workloads, VRAM matters more than raw CUDA core count. A model that doesn't fit in VRAM won't run — no matter how many cores you have.</p>
+
+    <div class="diagram-flow">
+        <div class="diagram-box">8 GB</div>
+        <div class="diagram-arrow">&rarr;</div>
+        <div class="diagram-box">Small models, basic training</div>
+        <div class="diagram-arrow">|</div>
+        <div class="diagram-box accent">16&ndash;24 GB</div>
+        <div class="diagram-arrow">&rarr;</div>
+        <div class="diagram-box accent">7B&ndash;13B models, serious work</div>
+        <div class="diagram-arrow">|</div>
+        <div class="diagram-box">48+ GB</div>
+        <div class="diagram-arrow">&rarr;</div>
+        <div class="diagram-box">Large LLMs, research</div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Verdict</div>
+        <p>The <strong>RTX 4090</strong> (24 GB) is the most powerful consumer GPU available. If you're combining CUDA learning with ML development, it's the sweet spot. But for <em>pure</em> CUDA learning, it's more than you need — the RTX 3060 covers the tutorials just fine.</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 05 — DGX Spark ═══════════════════════════════ -->
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>The NVIDIA DGX Spark</h2>
+
+    <p>NVIDIA's compact AI workstation, built on the <strong>GB10 Grace Blackwell Superchip</strong>. It's a desktop-sized machine that combines an ARM64 CPU and a Blackwell GPU in a unified memory architecture.</p>
+
+    <h3>Key Specifications</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Spec</th>
+                    <th>DGX Spark</th>
+                    <th>Comparison</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Chip</strong></td>
+                    <td>GB10 Grace Blackwell Superchip</td>
+                    <td>Custom NVIDIA SoC</td>
+                </tr>
+                <tr>
+                    <td><strong>CUDA Cores</strong></td>
+                    <td>6,144</td>
+                    <td>Similar to RTX 5070</td>
+                </tr>
+                <tr>
+                    <td><strong>Memory</strong></td>
+                    <td>128 GB unified (LPDDR5x)</td>
+                    <td>5&times; the RTX 4090's 24 GB</td>
+                </tr>
+                <tr>
+                    <td><strong>AI Performance</strong></td>
+                    <td>1 PFLOP FP4 sparse</td>
+                    <td>Blackwell Tensor Cores</td>
+                </tr>
+                <tr>
+                    <td><strong>CPU</strong></td>
+                    <td>20-core ARM64 (Grace)</td>
+                    <td>Not x86 — ARM architecture</td>
+                </tr>
+                <tr>
+                    <td><strong>OS</strong></td>
+                    <td>Ubuntu Linux (pre-installed)</td>
+                    <td>Full CUDA toolkit included</td>
+                </tr>
+                <tr>
+                    <td><strong>Networking</strong></td>
+                    <td>200GbE QSFP56 (ConnectX-8)</td>
+                    <td>Can link two units</td>
+                </tr>
+                <tr>
+                    <td><strong>Price</strong></td>
+                    <td>$4,699 / ~£3,800</td>
+                    <td>15&times; a used RTX 3060</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Unified Memory Architecture</h3>
+    <p>Unlike discrete GPUs where CPU and GPU have separate memory pools, the DGX Spark shares 128 GB between CPU and GPU. This makes <code>cudaMallocManaged</code> genuinely efficient — no PCIe transfers, just coherent access to the same physical memory.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel" style="text-align: center;">
+            <h4 style="color: var(--text-secondary);">Discrete GPU (e.g. RTX 3060)</h4>
+            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 0.5rem; align-items: center;">
+                <div style="background: var(--bg-code); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 1.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary); width: 80%;">CPU — System RAM (16&ndash;64 GB)</div>
+                <div style="font-family: var(--font-mono); font-size: 0.8rem; color: #ff7b72; padding: 0.2rem 0;">&#8597; PCIe (slow)</div>
+                <div style="background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 4px; padding: 0.5rem 1.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); width: 80%;">GPU — GDDR6X VRAM (12&ndash;24 GB)</div>
+            </div>
+        </div>
+        <div class="diagram-panel" style="text-align: center;">
+            <h4 style="color: var(--accent);">DGX Spark (Unified)</h4>
+            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 0.5rem; align-items: center;">
+                <div style="display: flex; gap: 4px; width: 80%; justify-content: center;">
+                    <div style="background: var(--bg-code); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 0.75rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary); flex: 1; text-align: center;">Grace CPU (ARM64)</div>
+                    <div style="background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 4px; padding: 0.5rem 0.75rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); flex: 1; text-align: center;">Blackwell GPU</div>
+                </div>
+                <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); padding: 0.2rem 0;">&#8597; Coherent link</div>
+                <div style="background: rgba(118, 185, 0, 0.15); border: 2px solid var(--accent); border-radius: 4px; padding: 0.6rem 1.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); width: 80%;">128 GB Shared LPDDR5x</div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Honest Verdict</h3>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Strengths</h4>
+            <ul>
+                <li><strong>Zero setup friction</strong> — Ubuntu + full CUDA toolkit pre-installed, boots straight into a working dev environment</li>
+                <li><strong>128 GB unified memory</strong> — run/fine-tune large LLMs up to ~200B parameters that would never fit on a consumer GPU</li>
+                <li><strong>Ideal for cudaMallocManaged</strong> — the unified architecture makes managed memory genuinely efficient, excellent for understanding unified memory concepts</li>
+                <li><strong>Full NVIDIA software ecosystem</strong> — NeMo, TensorRT, Triton, all pre-configured</li>
+                <li><strong>Can cluster two units</strong> — 200GbE link enables multi-GPU / distributed CUDA learning</li>
+                <li><strong>Compact form factor</strong> — desktop-sized, quiet, low power draw</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Limitations</h4>
+            <ul>
+                <li><strong>LPDDR5x bandwidth</strong> — slower than discrete GDDR6X/GDDR7; memory-bandwidth-bound kernels will run slower per-GB than on an RTX 4090</li>
+                <li><strong>ARM64 architecture</strong> — some x86-only tools, libraries, and container images may not work; ecosystem is narrower</li>
+                <li><strong>15&ndash;20&times; the cost</strong> of a used RTX 3060 — at ~£3,800 vs ~£250, the price gap is enormous</li>
+                <li><strong>6,144 CUDA cores</strong> — only RTX 5070-class; fewer cores than an RTX 4090 (16,384)</li>
+                <li><strong>Not a gaming GPU</strong> — no display output, no RT cores for graphics workloads</li>
+                <li><strong>Overkill for basic tutorials</strong> — the RTX 3060 handles everything in Tutorials 01&ndash;09</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3>Who Should Buy a DGX Spark?</h3>
+    <div class="callout">
+        <div class="callout-label">Honest Assessment</div>
+        <p>The DGX Spark is <strong>overkill for pure CUDA learning</strong>. A £250 used RTX 3060 covers every tutorial in this series. Where the Spark shines is as a <strong>combined CUDA learning machine and AI development workstation</strong> — if you also want to run and fine-tune large language models locally, prototype edge AI applications, or learn multi-GPU programming without renting cloud time. It's an excellent machine for the right person: someone who wants a single device that handles both CUDA education and serious AI development. It's not the right purchase for someone who only wants to learn CUDA basics on a budget.</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 06 — Cluster ═══════════════════════════════ -->
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>Two-Spark Cluster</h2>
+
+    <p>Two DGX Spark units can be linked via their built-in <strong>200GbE QSFP56</strong> ports (ConnectX-8 SuperNIC) to create a compact multi-GPU development cluster.</p>
+
+    <div style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin: 1.5rem 0; text-align: center;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <div style="background: var(--accent-dim); border: 2px solid var(--accent); border-radius: 8px; padding: 1rem 1.5rem; font-family: var(--font-mono); font-size: 0.8rem; min-width: 180px;">
+                <div style="color: var(--accent); font-weight: 700; margin-bottom: 0.3rem;">DGX Spark #1</div>
+                <div style="color: var(--text-secondary); font-size: 0.7rem;">128 GB unified</div>
+                <div style="color: var(--text-secondary); font-size: 0.7rem;">6,144 CUDA cores</div>
+                <div style="color: var(--text-secondary); font-size: 0.7rem;">Grace + Blackwell</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.2rem;">
+                <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent);">200GbE</div>
+                <div style="font-family: var(--font-mono); font-size: 1.5rem; color: var(--accent); font-weight: 700;">&harr;</div>
+                <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent);">QSFP56</div>
+            </div>
+            <div style="background: var(--accent-dim); border: 2px solid var(--accent); border-radius: 8px; padding: 1rem 1.5rem; font-family: var(--font-mono); font-size: 0.8rem; min-width: 180px;">
+                <div style="color: var(--accent); font-weight: 700; margin-bottom: 0.3rem;">DGX Spark #2</div>
+                <div style="color: var(--text-secondary); font-size: 0.7rem;">128 GB unified</div>
+                <div style="color: var(--text-secondary); font-size: 0.7rem;">6,144 CUDA cores</div>
+                <div style="color: var(--text-secondary); font-size: 0.7rem;">Grace + Blackwell</div>
+            </div>
+        </div>
+        <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border);">
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-primary);"><strong>Combined:</strong> 256 GB memory &middot; 12,288 CUDA cores &middot; 2 PFLOP FP4</div>
+        </div>
+    </div>
+
+    <h3>What This Enables</h3>
+    <ul>
+        <li><strong>Multi-GPU CUDA programming</strong> — learn <code>cudaMemcpyPeer</code>, peer-to-peer access, and GPU-to-GPU data transfers</li>
+        <li><strong>Distributed training</strong> — NCCL, MPI-based collective operations across two GPUs</li>
+        <li><strong>256 GB combined memory</strong> — run very large models that won't fit on a single node</li>
+        <li><strong>Real cluster experience</strong> — the networking and synchronisation patterns mirror larger data centre deployments</li>
+    </ul>
+
+    <div class="callout">
+        <div class="callout-label">Reality Check</div>
+        <p>A two-Spark cluster costs ~£7,600. For CUDA learning, this is firmly in "if money is no object" territory. Multi-GPU programming can also be learned on two consumer GPUs in a single desktop (e.g. two RTX 3060s for ~£500), or via cloud instances. The Spark cluster is more relevant for teams doing serious AI development who want a compact, always-on lab environment.</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 07 — Cloud ═══════════════════════════════ -->
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>Cloud GPU Instances</h2>
+
+    <p>Cloud GPUs make sense for occasional heavy workloads — large-scale training runs, experimenting with A100/H100-class hardware, or when you don't want to invest in local hardware.</p>
+
+    <h3>Provider Comparison</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Provider</th>
+                    <th>GPU Options</th>
+                    <th>VRAM</th>
+                    <th>Approx Cost/hr</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Google Colab Pro</strong></td>
+                    <td>T4, A100</td>
+                    <td>16&ndash;40 GB</td>
+                    <td>£9/month flat</td>
+                    <td>Easiest; not guaranteed A100</td>
+                </tr>
+                <tr>
+                    <td><strong>AWS (p3/p4/p5)</strong></td>
+                    <td>V100, A100, H100</td>
+                    <td>16&ndash;80 GB</td>
+                    <td>£2&ndash;£30/hr</td>
+                    <td>Enterprise-grade; complex setup</td>
+                </tr>
+                <tr>
+                    <td><strong>GCP</strong></td>
+                    <td>T4, L4, A100, H100</td>
+                    <td>16&ndash;80 GB</td>
+                    <td>£1&ndash;£25/hr</td>
+                    <td>Good Jupyter integration</td>
+                </tr>
+                <tr>
+                    <td><strong>Lambda Labs</strong></td>
+                    <td>A100, H100</td>
+                    <td>40&ndash;80 GB</td>
+                    <td>£1&ndash;£3/hr</td>
+                    <td style="color: var(--accent);">Best value for A100/H100</td>
+                </tr>
+                <tr>
+                    <td><strong>Vast.ai</strong></td>
+                    <td>Various (marketplace)</td>
+                    <td>8&ndash;80 GB</td>
+                    <td>£0.20&ndash;£3/hr</td>
+                    <td>Cheapest; variable reliability</td>
+                </tr>
+                <tr>
+                    <td><strong>RunPod</strong></td>
+                    <td>A100, H100, RTX 4090</td>
+                    <td>24&ndash;80 GB</td>
+                    <td>£0.40&ndash;£4/hr</td>
+                    <td>Good developer experience</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>When Cloud Makes Sense</h3>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Good For</h4>
+            <ul>
+                <li>Occasional heavy training runs</li>
+                <li>Testing on hardware you don't own (A100, H100)</li>
+                <li>Team environments / reproducible setups</li>
+                <li>Burst capacity — spin up, use, tear down</li>
+            </ul>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>Not Great For</h4>
+            <ul>
+                <li>Daily CUDA learning (costs add up quickly)</li>
+                <li>Iterative development (latency, session management)</li>
+                <li>Profiling with Nsight (often restricted)</li>
+                <li>Long-running experiments (left running = surprise bills)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-label">Cost Warning</div>
+        <p>A single A100 instance at £2.50/hr running 8 hours/day for a month costs <strong>~£600</strong> — enough to buy a used RTX 4070 Ti outright. Cloud is economical for occasional use, not daily development.</p>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 08 — Recommendation Matrix ═══════════════════════════════ -->
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>Recommendation Matrix</h2>
+
+    <p>Matching your needs and budget to the right hardware.</p>
+
+    <h3>Hardware Tiers at a Glance</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tier</th>
+                    <th>Hardware</th>
+                    <th>Cost</th>
+                    <th>Covers</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Free</strong></td>
+                    <td>Google Colab (T4)</td>
+                    <td>£0</td>
+                    <td>Tutorials 01&ndash;08, with session limits</td>
+                </tr>
+                <tr>
+                    <td><strong>Budget</strong></td>
+                    <td>Used RTX 3060 12 GB</td>
+                    <td>~£250</td>
+                    <td>All tutorials, full profiling</td>
+                </tr>
+                <tr>
+                    <td><strong>Enthusiast</strong></td>
+                    <td>RTX 4070 Ti / 4090</td>
+                    <td>£600&ndash;£1,600</td>
+                    <td>All tutorials + real ML training</td>
+                </tr>
+                <tr>
+                    <td><strong>Workstation</strong></td>
+                    <td>DGX Spark</td>
+                    <td>~£3,800</td>
+                    <td>All tutorials + LLM dev + edge AI</td>
+                </tr>
+                <tr>
+                    <td><strong>Cloud</strong></td>
+                    <td>Lambda Labs / Vast.ai (A100)</td>
+                    <td>£1&ndash;3/hr</td>
+                    <td>Heavy training, pay-as-you-go</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Visual Tier Comparison</h3>
+    <div class="tier-visual">
+        <div class="tier-bar">
+            <span class="tier-label">Free</span>
+            <div class="tier-fill" style="width: 15%; background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent);">Colab T4</div>
+            <span class="tier-cost">£0</span>
+        </div>
+        <div class="tier-bar">
+            <span class="tier-label">Budget</span>
+            <div class="tier-fill" style="width: 30%; background: rgba(118,185,0,0.2); border: 1px solid var(--accent); color: var(--accent);">RTX 3060 12 GB</div>
+            <span class="tier-cost">~£250</span>
+        </div>
+        <div class="tier-bar">
+            <span class="tier-label">Enthusiast</span>
+            <div class="tier-fill" style="width: 55%; background: rgba(118,185,0,0.3); border: 1px solid var(--accent); color: var(--accent);">RTX 4070 Ti / 4090</div>
+            <span class="tier-cost">£600&ndash;£1,600</span>
+        </div>
+        <div class="tier-bar">
+            <span class="tier-label">Workstation</span>
+            <div class="tier-fill" style="width: 80%; background: rgba(118,185,0,0.4); border: 1px solid var(--accent); color: #e6edf3;">DGX Spark</div>
+            <span class="tier-cost">~£3,800</span>
+        </div>
+        <div class="tier-bar">
+            <span class="tier-label">Enterprise</span>
+            <div class="tier-fill" style="width: 100%; background: var(--accent); color: #0a0a0a; font-weight: 600;">Cloud A100 / H100</div>
+            <span class="tier-cost">£1&ndash;30/hr</span>
+        </div>
+    </div>
+
+    <h3>Decision Guide</h3>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>"Just learning CUDA basics"</h4>
+            <p>&rarr; <strong>Google Colab</strong> (free) or a <strong>used RTX 3060</strong> (~£250). Either will cover the full tutorial series. The RTX 3060 adds full profiling and no session limits.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>"Learning + ML development"</h4>
+            <p>&rarr; <strong>RTX 4070 Ti</strong> (16 GB, ~£700) or <strong>RTX 4090</strong> (24 GB, ~£1,500). Enough VRAM for real model training alongside CUDA learning.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>"Learning + LLM work + no cloud"</h4>
+            <p>&rarr; <strong>DGX Spark</strong> (~£3,800). The 128 GB unified memory lets you run and fine-tune large models locally without cloud dependency. Also excellent for exploring unified memory programming.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>"Enterprise / research"</h4>
+            <p>&rarr; <strong>Cloud A100/H100</strong> instances. On-demand access to top-tier hardware without capital expenditure. Use Lambda Labs or RunPod for best developer experience.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ SLIDE 09 — Summary ═══════════════════════════════ -->
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Summary</h2>
+
+    <h3>What We Covered</h3>
+    <ul>
+        <li><strong>Minimum requirements</strong> — any NVIDIA GPU with compute capability 5.0+, the CUDA Toolkit, and a terminal.</li>
+        <li><strong>Google Colab</strong> — free T4 GPU access, good for getting started, limited by session timeouts and no profiling.</li>
+        <li><strong>Budget desktop</strong> — the used RTX 3060 12 GB (~£250) is the best value CUDA learning card on the market.</li>
+        <li><strong>Mid-range</strong> — RTX 4070 Ti / 4090 for learners who also do real ML training and need 16&ndash;24 GB VRAM.</li>
+        <li><strong>DGX Spark</strong> — a powerful AI workstation with 128 GB unified memory; overkill for pure CUDA learning but ideal if you also do LLM development.</li>
+        <li><strong>Two-Spark cluster</strong> — 256 GB combined memory with 200GbE link for multi-GPU and distributed CUDA programming.</li>
+        <li><strong>Cloud instances</strong> — pay-as-you-go access to A100/H100-class hardware; best for occasional heavy workloads, not daily learning.</li>
+    </ul>
+
+    <h3>Key Takeaways</h3>
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Start Free, Go Local When Committed</h4>
+            <p>Begin with Google Colab to see if CUDA programming clicks for you. Once you're committed, a local GPU gives you the full development experience — profiling, persistent files, no session limits.</p>
+        </div>
+        <div class="diagram-panel accent-border">
+            <h4>The Best GPU Is the One You'll Use</h4>
+            <p>A £250 card you use every day beats a £4,000 workstation gathering dust. Match the hardware to your actual workflow, not your aspirations.</p>
+        </div>
+    </div>
+
+    <div class="diagram-vertical">
+        <div class="diagram-box dim">Start: Google Colab (free)</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box accent">Committed: Used RTX 3060 12 GB (~£250)</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box">Serious ML: RTX 4070 Ti / 4090 (£600&ndash;£1,600)</div>
+        <div class="diagram-arrow">&darr;</div>
+        <div class="diagram-box">AI Workstation: DGX Spark (~£3,800)</div>
+    </div>
+
+    <h3>Series Complete</h3>
+    <div class="callout">
+        <div class="callout-label">Congratulations</div>
+        <p>You've reached the end of the CUDA Programming Series. Over 10 tutorials, we've covered GPU architecture, kernel programming, memory hierarchies, synchronisation, streams, profiling, and now the hardware to run it all on. The next step is yours — pick a project, pick a GPU, and start building.</p>
+    </div>
+</section>
+
+<!-- ════════════════════════════════════ Footer ════════════════════════════════════ -->
+<footer class="footer">
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/LLMs#cuda-programming">CUDA Programming Series</a></p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-secondary);">Hardware Platforms for CUDA Learning — Tutorial 10 of 10</p>
+    <p style="margin-top: 0.75rem; color: var(--accent); font-family: var(--font-display); font-weight: 600;">You've completed the CUDA Programming Series!</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;"><a href="https://github.com/BrendanJamesLynskey/LLMs#cuda-programming">Back to Series Index</a></p>
+</footer>
+
+<script>
+    // Smooth scroll for table-of-contents links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // Subtle fade-in animation for slides on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.slide').forEach(slide => {
+        slide.style.opacity = '0';
+        slide.style.transform = 'translateY(30px)';
+        slide.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(slide);
+    });
+</script>
+
+</body>
+</html>
