@@ -9,15 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-card: #0d1117;
-            --bg-code: #161b22;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --accent: #76B900;
-            --accent-dim: #76B90044;
-            --accent-glow: #76B90033;
-            --border: #21262d;
+            --bg-primary: #1b1b1a;
+            --bg-card: #212120;
+            --bg-code: #292928;
+            --text-primary: #edede7;
+            --text-secondary: #9b9b95;
+            --accent: #b8b315;
+            --accent-dim: #b8b31544;
+            --accent-glow: #b8b31533;
+            --border: #363633;
             --font-display: 'Space Grotesk', sans-serif;
             --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
             --font-body: 'Inter', sans-serif;
@@ -228,7 +228,7 @@
             font-family: var(--font-mono);
             font-size: 0.75rem;
             color: var(--accent);
-            background: rgba(118, 185, 0, 0.08);
+            background: rgba(184,179,21,0.08);
             padding: 0.4rem 1rem;
             border-bottom: 1px solid var(--border);
         }
@@ -243,18 +243,18 @@
             font-family: var(--font-mono);
             font-size: 0.85rem;
             line-height: 1.6;
-            color: #c9d1d9;
+            color: #d5d5cf;
         }
 
         /* Syntax highlighting (manual) */
-        .kw { color: #ff7b72; }
-        .fn { color: #d2a8ff; }
-        .str { color: #a5d6ff; }
-        .cm { color: #8b949e; font-style: italic; }
-        .num { color: #79c0ff; }
-        .type { color: #ffa657; }
-        .dir { color: #ff7b72; }
-        .mac { color: #ffa657; }
+        .kw { color: #e57d63; }
+        .fn { color: #d1c2e1; }
+        .str { color: #c9dbe2; }
+        .cm { color: #9b9b95; font-style: italic; }
+        .num { color: #afcbd8; }
+        .type { color: #e0b172; }
+        .dir { color: #e57d63; }
+        .mac { color: #e0b172; }
 
         /* ── Tables ── */
         .table-wrap {
@@ -292,7 +292,7 @@
         }
 
         tr:nth-child(even) td {
-            background: rgba(13, 17, 23, 0.5);
+            background: rgba(33,33,32,0.5);
         }
 
         /* ── Diagrams ── */
@@ -324,7 +324,7 @@
         .diagram-box.accent {
             border-color: var(--accent);
             color: var(--accent);
-            background: rgba(118, 185, 0, 0.08);
+            background: rgba(184,179,21,0.08);
         }
 
         .diagram-box.dim {
@@ -400,7 +400,7 @@
         .hierarchy-item.accent {
             border-color: var(--accent);
             color: var(--accent);
-            background: rgba(118, 185, 0, 0.08);
+            background: rgba(184,179,21,0.08);
         }
 
         /* Grid diagram */
@@ -1018,7 +1018,7 @@
             <h4 style="color: var(--text-secondary);">Discrete GPU (e.g. RTX 3060)</h4>
             <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 0.5rem; align-items: center;">
                 <div style="background: var(--bg-code); border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem 1.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary); width: 80%;">CPU — System RAM (16&ndash;64 GB)</div>
-                <div style="font-family: var(--font-mono); font-size: 0.8rem; color: #ff7b72; padding: 0.2rem 0;">&#8597; PCIe (slow)</div>
+                <div style="font-family: var(--font-mono); font-size: 0.8rem; color: #e57d63; padding: 0.2rem 0;">&#8597; PCIe (slow)</div>
                 <div style="background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 4px; padding: 0.5rem 1.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); width: 80%;">GPU — GDDR6X VRAM (12&ndash;24 GB)</div>
             </div>
         </div>
@@ -1030,7 +1030,7 @@
                     <div style="background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 4px; padding: 0.5rem 0.75rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); flex: 1; text-align: center;">Blackwell GPU</div>
                 </div>
                 <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); padding: 0.2rem 0;">&#8597; Coherent link</div>
-                <div style="background: rgba(118, 185, 0, 0.15); border: 2px solid var(--accent); border-radius: 4px; padding: 0.6rem 1.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); width: 80%;">128 GB Shared LPDDR5x</div>
+                <div style="background: rgba(184,179,21,0.15); border: 2px solid var(--accent); border-radius: 4px; padding: 0.6rem 1.5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); width: 80%;">128 GB Shared LPDDR5x</div>
             </div>
         </div>
     </div>
@@ -1271,22 +1271,22 @@
         </div>
         <div class="tier-bar">
             <span class="tier-label">Budget</span>
-            <div class="tier-fill" style="width: 30%; background: rgba(118,185,0,0.2); border: 1px solid var(--accent); color: var(--accent);">RTX 3060 12 GB</div>
+            <div class="tier-fill" style="width: 30%; background: rgba(184,179,21,0.2); border: 1px solid var(--accent); color: var(--accent);">RTX 3060 12 GB</div>
             <span class="tier-cost">~£250</span>
         </div>
         <div class="tier-bar">
             <span class="tier-label">Enthusiast</span>
-            <div class="tier-fill" style="width: 55%; background: rgba(118,185,0,0.3); border: 1px solid var(--accent); color: var(--accent);">RTX 4070 Ti / 4090</div>
+            <div class="tier-fill" style="width: 55%; background: rgba(184,179,21,0.3); border: 1px solid var(--accent); color: var(--accent);">RTX 4070 Ti / 4090</div>
             <span class="tier-cost">£600&ndash;£1,600</span>
         </div>
         <div class="tier-bar">
             <span class="tier-label">Workstation</span>
-            <div class="tier-fill" style="width: 80%; background: rgba(118,185,0,0.4); border: 1px solid var(--accent); color: #e6edf3;">DGX Spark</div>
+            <div class="tier-fill" style="width: 80%; background: rgba(184,179,21,0.4); border: 1px solid var(--accent); color: #edede7;">DGX Spark</div>
             <span class="tier-cost">~£3,800</span>
         </div>
         <div class="tier-bar">
             <span class="tier-label">Enterprise</span>
-            <div class="tier-fill" style="width: 100%; background: var(--accent); color: #0a0a0a; font-weight: 600;">Cloud A100 / H100</div>
+            <div class="tier-fill" style="width: 100%; background: var(--accent); color: #1b1b1a; font-weight: 600;">Cloud A100 / H100</div>
             <span class="tier-cost">£1&ndash;30/hr</span>
         </div>
     </div>
