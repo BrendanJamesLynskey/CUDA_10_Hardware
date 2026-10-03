@@ -688,7 +688,7 @@
     <div class="diagram-grid cols-3">
         <div class="diagram-panel accent-border">
             <h4>NVIDIA GPU</h4>
-            <p>Any NVIDIA GPU with CUDA support — compute capability 5.0 or higher. This includes every GeForce card from the GTX 900 series onward.</p>
+            <p>Any NVIDIA GPU with CUDA support — compute capability 5.0 or higher with CUDA 12.x (every GeForce card from the GTX 900 series onward). CUDA 13 needs compute capability 7.5+ (GTX 16xx / RTX 20xx onward).</p>
         </div>
         <div class="diagram-panel accent-border">
             <h4>CUDA Toolkit</h4>
@@ -1242,7 +1242,7 @@
                 </tr>
                 <tr>
                     <td><strong>Enthusiast</strong></td>
-                    <td>RTX 4070 Ti / 4090</td>
+                    <td>RTX 4070 Ti Super / 4090</td>
                     <td>£600&ndash;£1,600</td>
                     <td>All tutorials + real ML training</td>
                 </tr>
@@ -1276,7 +1276,7 @@
         </div>
         <div class="tier-bar">
             <span class="tier-label">Enthusiast</span>
-            <div class="tier-fill" style="width: 55%; background: rgba(184,179,21,0.3); border: 1px solid var(--accent); color: var(--accent);">RTX 4070 Ti / 4090</div>
+            <div class="tier-fill" style="width: 55%; background: rgba(184,179,21,0.3); border: 1px solid var(--accent); color: var(--accent);">RTX 4070 Ti Super / 4090</div>
             <span class="tier-cost">£600&ndash;£1,600</span>
         </div>
         <div class="tier-bar">
@@ -1299,7 +1299,7 @@
         </div>
         <div class="diagram-panel accent-border">
             <h4>"Learning + ML development"</h4>
-            <p>&rarr; <strong>RTX 4070 Ti</strong> (16 GB, ~£700) or <strong>RTX 4090</strong> (24 GB, ~£1,500). Enough VRAM for real model training alongside CUDA learning.</p>
+            <p>&rarr; <strong>RTX 4070 Ti Super</strong> (16 GB, ~£700) or <strong>RTX 4090</strong> (24 GB, ~£1,500). Enough VRAM for real model training alongside CUDA learning.</p>
         </div>
         <div class="diagram-panel accent-border">
             <h4>"Learning + LLM work + no cloud"</h4>
@@ -1322,7 +1322,7 @@
         <li><strong>Minimum requirements</strong> — any NVIDIA GPU with compute capability 5.0+, the CUDA Toolkit, and a terminal.</li>
         <li><strong>Google Colab</strong> — free T4 GPU access, good for getting started, limited by session timeouts and no profiling.</li>
         <li><strong>Budget desktop</strong> — the used RTX 3060 12 GB (~£250) is the best value CUDA learning card on the market.</li>
-        <li><strong>Mid-range</strong> — RTX 4070 Ti / 4090 for learners who also do real ML training and need 16&ndash;24 GB VRAM.</li>
+        <li><strong>Mid-range</strong> — RTX 4070 Ti Super / 4090 for learners who also do real ML training and need 16&ndash;24 GB VRAM.</li>
         <li><strong>DGX Spark</strong> — a powerful AI workstation with 128 GB unified memory; overkill for pure CUDA learning but ideal if you also do LLM development.</li>
         <li><strong>Two-Spark cluster</strong> — 256 GB combined memory with 200GbE link for multi-GPU and distributed CUDA programming.</li>
         <li><strong>Cloud instances</strong> — pay-as-you-go access to A100/H100-class hardware; best for occasional heavy workloads, not daily learning.</li>
@@ -1345,7 +1345,7 @@
         <div class="diagram-arrow">&darr;</div>
         <div class="diagram-box accent">Committed: Used RTX 3060 12 GB (~£250)</div>
         <div class="diagram-arrow">&darr;</div>
-        <div class="diagram-box">Serious ML: RTX 4070 Ti / 4090 (£600&ndash;£1,600)</div>
+        <div class="diagram-box">Serious ML: RTX 4070 Ti Super / 4090 (£600&ndash;£1,600)</div>
         <div class="diagram-arrow">&darr;</div>
         <div class="diagram-box">AI Workstation: DGX Spark (~£3,800)</div>
     </div>
